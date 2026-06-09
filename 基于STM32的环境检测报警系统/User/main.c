@@ -98,6 +98,16 @@ uint8_t String_IsNumber(char *str)
 	return 1;
 }
 
+uint8_t String_IsSignedNumber(char *str)
+{
+	if(str[0] == '-')
+	{
+		return String_IsNumber(&str[1]);
+	}
+	
+	return String_IsNumber(str);
+}
+
 void Command_Parse(char *cmd)
 {
 	if(strcmp(cmd, "STATUS?") == 0)
@@ -150,11 +160,20 @@ void Command_Parse(char *cmd)
 	else if(strcmp(cmd, "ALARM=AUTO") == 0)
 	{
 		Alarm_ManualMode = 0;
+		Alarm_State = (Sensor_VoltageMv > Alarm_ThresholdMv);
 		Serial_SendString("$OK,ALARM=AUTO\r\n");
 	}
 	else if(strncmp(cmd, "MOTOR=", 6) == 0)
 	{
-		int speed = atoi(&cmd[6]);
+		int speed;
+		
+		if(!String_IsSignedNumber(&cmd[6]))
+		{
+			Serial_SendString("$ERR=MOTOR_FORMAT\r\n");
+			return;
+		}
+		
+		speed = atoi(&cmd[6]);
 		
 		if(speed >= -100 && speed <= 100)
 		{

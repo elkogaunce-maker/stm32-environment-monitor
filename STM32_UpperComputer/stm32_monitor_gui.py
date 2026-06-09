@@ -195,6 +195,7 @@ class MonitorApp(tk.Tk):
         self.mv_var = tk.StringVar(value="--")
         self.th_var = tk.StringVar(value="--")
         self.alarm_var = tk.StringVar(value="--")
+        self.mode_var = tk.StringVar(value="--")
         self.version_var = tk.StringVar(value="--")
         self.conn_var = tk.StringVar(value="未连接")
 
@@ -229,6 +230,7 @@ class MonitorApp(tk.Tk):
             ("电压 mV", self.mv_var),
             ("阈值 mV", self.th_var),
             ("报警", self.alarm_var),
+            ("模式", self.mode_var),
             ("版本", self.version_var),
         ]
         for i, (label, var) in enumerate(fields):
@@ -247,11 +249,12 @@ class MonitorApp(tk.Tk):
         ttk.Button(cmds, text="设置阈值", command=self.set_threshold).grid(row=0, column=4, padx=6, pady=8)
         ttk.Button(cmds, text="报警开", command=lambda: self.send_command("@ALARM=ON")).grid(row=1, column=0, padx=6, pady=8)
         ttk.Button(cmds, text="报警关", command=lambda: self.send_command("@ALARM=OFF")).grid(row=1, column=1, padx=6, pady=8)
-        ttk.Label(cmds, text="电机速度").grid(row=1, column=2, padx=6, pady=8)
-        ttk.Entry(cmds, textvariable=self.motor_var, width=8).grid(row=1, column=3, padx=6, pady=8)
-        ttk.Button(cmds, text="设置电机", command=self.set_motor).grid(row=1, column=4, padx=6, pady=8)
-        ttk.Checkbutton(cmds, text="每秒自动查询", variable=self.auto_query_var).grid(row=1, column=5, padx=12, pady=8)
-        cmds.columnconfigure(6, weight=1)
+        ttk.Button(cmds, text="自动模式", command=lambda: self.send_command("@ALARM=AUTO")).grid(row=1, column=2, padx=6, pady=8)
+        ttk.Label(cmds, text="电机速度").grid(row=1, column=3, padx=6, pady=8)
+        ttk.Entry(cmds, textvariable=self.motor_var, width=8).grid(row=1, column=4, padx=6, pady=8)
+        ttk.Button(cmds, text="设置电机", command=self.set_motor).grid(row=1, column=5, padx=6, pady=8)
+        ttk.Checkbutton(cmds, text="每秒自动查询", variable=self.auto_query_var).grid(row=1, column=6, padx=12, pady=8)
+        cmds.columnconfigure(7, weight=1)
 
         manual = ttk.LabelFrame(root, text="手动命令")
         manual.pack(fill=tk.X, pady=10)
@@ -409,6 +412,13 @@ class MonitorApp(tk.Tk):
             self.th_var.set(fields["TH"])
         if "ALARM" in fields:
             self.alarm_var.set("报警" if fields["ALARM"] in ("1", "ON") else "正常")
+        if "MODE" in fields:
+            mode_map = {
+                "AUTO": "自动",
+                "MANUAL_ON": "手动开",
+                "MANUAL_OFF": "手动关",
+            }
+            self.mode_var.set(mode_map.get(fields["MODE"], fields["MODE"]))
 
     def log(self, msg: str) -> None:
         now = time.strftime("%H:%M:%S")
