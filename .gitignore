@@ -1,0 +1,29 @@
+# Keil build output
+基于STM32的环境检测报警系统/Objects/*
+!基于STM32的环境检测报警系统/Objects/project.hex
+基于STM32的环境检测报警系统/Listings/
+基于STM32的环境检测报警系统/DebugConfig/
+
+# Keil temporary and user files
+*.uvguix.*
+*.bak
+*.dep
+*.crf
+*.o
+*.d
+*.lst
+*.map
+*.axf
+*.htm
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Office temporary and local backup files
+~$*
+*_旧版备份.docx
+
+# System files
+.DS_Store
+Thumbs.db
