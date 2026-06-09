@@ -15,6 +15,7 @@
 *.map
 *.axf
 *.htm
+*.log
 
 # Python cache
 __pycache__/

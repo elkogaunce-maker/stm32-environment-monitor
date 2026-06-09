@@ -23,6 +23,25 @@ uint16_t ADC_ToVoltageMv(uint16_t adc)
 	return (uint32_t)adc * ADC_REF_MV / ADC_MAX_VALUE;
 }
 
+uint16_t ADC_GetAverageValue(uint8_t sample_count)
+{
+	uint8_t i;
+	uint32_t sum = 0;
+	
+	if(sample_count == 0)
+	{
+		sample_count = 1;
+	}
+	
+	for(i = 0; i < sample_count; i++)
+	{
+		sum += AD_Getvalue();
+		Delay_ms(1);
+	}
+	
+	return (uint16_t)(sum / sample_count);
+}
+
 void Serial_SendSignedNumber(int32_t Number, uint8_t Length)
 {
 	if(Number < 0)
@@ -39,7 +58,7 @@ void Serial_SendSignedNumber(int32_t Number, uint8_t Length)
 void Serial_SendStatus(void)
 {
 	Serial_SendString("$STATUS,ADC=");
-	Serial_SendNumber(AD_Value[0], 4);
+	Serial_SendNumber(Value, 4);
 	Serial_SendString(",MV=");
 	Serial_SendNumber(Sensor_VoltageMv, 4);
 	Serial_SendString(",TH=");
@@ -157,13 +176,12 @@ void Command_Parse(char *cmd)
 
 void Sensor_Update(void)
 {
-	AD_Getvalue();
-	Value = AD_Value[0];
+	Value = ADC_GetAverageValue(ADC_FILTER_SAMPLE_COUNT);
 	Sensor_VoltageMv = ADC_ToVoltageMv(Value);
 }
 void Display_Update(void)
 {
-	OLED_ShowNum(1,5,AD_Value[0],4);
+	OLED_ShowNum(1,5,Value,4);
 	OLED_ShowNum(2,4,Sensor_VoltageMv,4);
 	OLED_ShowSignedNum(3,7,Motor_AlarmSpeed,3);
 }
