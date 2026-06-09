@@ -22,7 +22,7 @@ uint16_t ADC_ToVoltageMv(uint16_t adc)
 {
 	return (uint32_t)adc * ADC_REF_MV / ADC_MAX_VALUE;
 }
-
+//取8次的转化值平均处理
 uint16_t ADC_GetAverageValue(uint8_t sample_count)
 {
 	uint8_t i;
@@ -41,7 +41,7 @@ uint16_t ADC_GetAverageValue(uint8_t sample_count)
 	
 	return (uint16_t)(sum / sample_count);
 }
-
+//设置电机速度
 void Serial_SendSignedNumber(int32_t Number, uint8_t Length)
 {
 	if(Number < 0)
@@ -76,7 +76,7 @@ void Serial_SendStatus(void)
 	}
 	Serial_SendString("\r\n");
 }
-
+//检查串口输入是否为纯数字
 uint8_t String_IsNumber(char *str)
 {
 	uint8_t i = 0;
@@ -107,7 +107,7 @@ uint8_t String_IsSignedNumber(char *str)
 	
 	return String_IsNumber(str);
 }
-
+//串口发送什么指令，单片机执行什么指令
 void Command_Parse(char *cmd)
 {
 	if(strcmp(cmd, "STATUS?") == 0)
