@@ -22,7 +22,7 @@ uint16_t ADC_ToVoltageMv(uint16_t adc)
 {
 	return (uint32_t)adc * ADC_REF_MV / ADC_MAX_VALUE;
 }
-//取8次的转化值平均处理
+//取多次的转化值平均处理
 uint16_t ADC_GetAverageValue(uint8_t sample_count)
 {
 	uint8_t i;
@@ -97,7 +97,7 @@ uint8_t String_IsNumber(char *str)
 	
 	return 1;
 }
-
+//检查是否是正常带符号的数字
 uint8_t String_IsSignedNumber(char *str)
 {
 	if(str[0] == '-')
@@ -230,7 +230,7 @@ void Alarm_Handle(void)
 			}
 		}
 	}
-	
+//形成LED闪烁，蜂鸣器报警
 	if(Alarm_State)
 	{
 		blink = !blink;

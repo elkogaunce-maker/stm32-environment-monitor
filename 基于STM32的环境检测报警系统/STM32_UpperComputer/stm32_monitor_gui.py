@@ -11,7 +11,6 @@ Protocol:
 from __future__ import annotations
 
 import ctypes
-from ctypes import wintypes
 import queue
 import threading
 import time
@@ -104,7 +103,6 @@ class WinSerialPort:
 
     def __init__(self, port: str, baudrate: int):
         self.kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
-        self._configure_api_types()
         path = port if port.startswith(r"\\.") else rf"\\.\{port}"
         self.handle = self.kernel32.CreateFileW(
             path,
@@ -121,46 +119,6 @@ class WinSerialPort:
         self.kernel32.SetupComm(self.handle, 4096, 4096)
         self._configure(baudrate)
         self.kernel32.PurgeComm(self.handle, self.PURGE_RXCLEAR | self.PURGE_TXCLEAR)
-
-    def _configure_api_types(self) -> None:
-        self.kernel32.CreateFileW.argtypes = [
-            wintypes.LPCWSTR,
-            wintypes.DWORD,
-            wintypes.DWORD,
-            wintypes.LPVOID,
-            wintypes.DWORD,
-            wintypes.DWORD,
-            wintypes.HANDLE,
-        ]
-        self.kernel32.CreateFileW.restype = wintypes.HANDLE
-        self.kernel32.SetupComm.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.DWORD]
-        self.kernel32.SetupComm.restype = wintypes.BOOL
-        self.kernel32.GetCommState.argtypes = [wintypes.HANDLE, ctypes.POINTER(DCB)]
-        self.kernel32.GetCommState.restype = wintypes.BOOL
-        self.kernel32.SetCommState.argtypes = [wintypes.HANDLE, ctypes.POINTER(DCB)]
-        self.kernel32.SetCommState.restype = wintypes.BOOL
-        self.kernel32.SetCommTimeouts.argtypes = [wintypes.HANDLE, ctypes.POINTER(COMMTIMEOUTS)]
-        self.kernel32.SetCommTimeouts.restype = wintypes.BOOL
-        self.kernel32.PurgeComm.argtypes = [wintypes.HANDLE, wintypes.DWORD]
-        self.kernel32.PurgeComm.restype = wintypes.BOOL
-        self.kernel32.WriteFile.argtypes = [
-            wintypes.HANDLE,
-            wintypes.LPCVOID,
-            wintypes.DWORD,
-            ctypes.POINTER(wintypes.DWORD),
-            wintypes.LPVOID,
-        ]
-        self.kernel32.WriteFile.restype = wintypes.BOOL
-        self.kernel32.ReadFile.argtypes = [
-            wintypes.HANDLE,
-            wintypes.LPVOID,
-            wintypes.DWORD,
-            ctypes.POINTER(wintypes.DWORD),
-            wintypes.LPVOID,
-        ]
-        self.kernel32.ReadFile.restype = wintypes.BOOL
-        self.kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
-        self.kernel32.CloseHandle.restype = wintypes.BOOL
 
     def _configure(self, baudrate: int) -> None:
         dcb = DCB()
@@ -296,7 +254,7 @@ class MonitorApp(tk.Tk):
         ttk.Entry(cmds, textvariable=self.motor_var, width=8).grid(row=1, column=4, padx=6, pady=8)
         ttk.Button(cmds, text="设置电机", command=self.set_motor).grid(row=1, column=5, padx=6, pady=8)
         ttk.Checkbutton(cmds, text="每秒自动查询", variable=self.auto_query_var).grid(row=1, column=6, padx=12, pady=8)
-        cmds.columnconfigure(6, weight=1)
+        cmds.columnconfigure(7, weight=1)
 
         manual = ttk.LabelFrame(root, text="手动命令")
         manual.pack(fill=tk.X, pady=10)
@@ -455,12 +413,12 @@ class MonitorApp(tk.Tk):
         if "ALARM" in fields:
             self.alarm_var.set("报警" if fields["ALARM"] in ("1", "ON") else "正常")
         if "MODE" in fields:
-            mode_name = {
+            mode_map = {
                 "AUTO": "自动",
                 "MANUAL_ON": "手动开",
                 "MANUAL_OFF": "手动关",
-            }.get(fields["MODE"], fields["MODE"])
-            self.mode_var.set(mode_name)
+            }
+            self.mode_var.set(mode_map.get(fields["MODE"], fields["MODE"]))
 
     def log(self, msg: str) -> None:
         now = time.strftime("%H:%M:%S")
