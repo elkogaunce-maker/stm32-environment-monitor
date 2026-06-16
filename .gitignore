@@ -1,4 +1,8 @@
 # Keil build output
+**/Objects/*
+!**/Objects/project.hex
+**/Listings/
+**/DebugConfig/
 基于STM32的环境检测报警系统/Objects/*
 !基于STM32的环境检测报警系统/Objects/project.hex
 基于STM32的环境检测报警系统/Listings/

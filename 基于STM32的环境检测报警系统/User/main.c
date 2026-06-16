@@ -47,14 +47,14 @@ void Serial_SendSignedNumber(int32_t Number, uint8_t Length)
 	if(Number < 0)
 	{
 		Serial_SendByte('-');
-		Serial_SendNumber((uint32_t)(-Number), Length);
+		Serial_SendNumber((uint32_t)(-Number), Length);// length 在这里的作用主要是格式化输出
 	}
 	else
 	{
 		Serial_SendNumber((uint32_t)Number, Length);
 	}
 }
-
+//串口发送状态
 void Serial_SendStatus(void)
 {
 	Serial_SendString("$STATUS,ADC=");
