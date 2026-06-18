@@ -780,6 +780,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\AppConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>Ring_Buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Ring_Buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>Ring_Buffer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Ring_Buffer.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

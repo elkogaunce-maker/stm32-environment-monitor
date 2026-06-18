@@ -16,6 +16,7 @@ void Serial_SendString(char *Sring);
 uint32_t Serial_Pow(uint32_t X,uint32_t Y);
 void Serial_SendNumber(uint32_t Number,uint8_t Length);
 uint8_t Serial_GetRxFlag(void);
+void Serial_RxTask(void);
 void Serial_SendPacket(void);
 
 

@@ -1,12 +1,16 @@
 #include "stm32f10x.h"                 
 #include "stdio.h"
+#include "Ring_Buffer.h"
 #define SERIAL_RX_BUF_SIZE 100
 
 char Serial_RxPacket[SERIAL_RX_BUF_SIZE];
 volatile uint8_t Serial_RxFlag;
+static RingBuffer Serial_RxBuffer;
 
 void Serial_Init(void)
 {
+	RB_Init(&Serial_RxBuffer);
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1,ENABLE);
 	
@@ -107,15 +111,19 @@ uint8_t Serial_GetRxFlag(void)
 	return 0;
 }
 
-void USART1_IRQHandler(void)
+void Serial_RxTask(void)
 {
     static uint8_t RxState = 0;
     static uint8_t pRxPacket = 0;
+    uint8_t RxData;
 
-    if (USART_GetITStatus(USART1, USART_IT_RXNE) == SET)
+    if (Serial_RxFlag)
     {
-        uint8_t RxData = USART_ReceiveData(USART1);
+        return;
+    }
 
+    while (RB_Get(&Serial_RxBuffer, &RxData))
+    {
         if (RxState == 0)
         {
             if (RxData == '@')
@@ -149,12 +157,23 @@ void USART1_IRQHandler(void)
             {
                 Serial_RxPacket[pRxPacket] = '\0';
                 Serial_RxFlag = 1;
+                RxState = 0;
+                pRxPacket = 0;
+                return;
             }
 
             RxState = 0;
             pRxPacket = 0;
         }
+    }
+}
 
+void USART1_IRQHandler(void)
+{
+    if (USART_GetITStatus(USART1, USART_IT_RXNE) == SET)
+    {
+        uint8_t RxData = (uint8_t)USART_ReceiveData(USART1);
+        RB_Put(&Serial_RxBuffer, RxData);
         USART_ClearITPendingBit(USART1, USART_IT_RXNE);
     }
 }

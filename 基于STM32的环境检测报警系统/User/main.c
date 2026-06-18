@@ -265,6 +265,8 @@ void Communication_Handle(void)
 {
 	static uint8_t status_count = 0;
 	
+	Serial_RxTask();
+	
 	if(Serial_GetRxFlag())
 	{
 		Command_Parse(Serial_RxPacket);
