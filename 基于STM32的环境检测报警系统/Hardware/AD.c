@@ -2,6 +2,8 @@
 
 uint16_t AD_Value[2];
 
+uint32_t timeout;
+
 void AD_Init()
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);
@@ -48,9 +50,33 @@ void AD_Init()
 	ADC_Cmd(ADC1,ENABLE);
 	//自动校准
 	ADC_ResetCalibration(ADC1);
-	while(ADC_GetResetCalibrationStatus(ADC1) == SET);
+	
+	for(timeout=0;timeout<1000000;timeout++)
+	{
+		if(ADC_GetResetCalibrationStatus(ADC1) == RESET)
+		{
+			break;
+		}
+	}
+	if(timeout >= 1000000)
+	{
+		return;
+	}
+	
 	ADC_StartCalibration(ADC1);
-	while(ADC_GetCalibrationStatus(ADC1) == SET);
+	
+	for(timeout=0;timeout<1000000;timeout++)
+	{
+		 if(ADC_GetCalibrationStatus(ADC1) == RESET)
+		 {
+			 break;
+		 }
+	}
+	if(timeout >= 1000000)
+	{
+		return ;
+	}
+
 }
 
 uint16_t  AD_Getvalue(void)
@@ -62,7 +88,18 @@ uint16_t  AD_Getvalue(void)
 	
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//软件触发
 	
-  while(DMA_GetFlagStatus(DMA1_FLAG_TC1) == RESET);
+	for(timeout=0;timeout<100000;timeout++)
+	{
+		if(DMA_GetFlagStatus(DMA1_FLAG_TC1) == SET)
+		{
+			break;
+		}
+	}
+	if(timeout >= 100000)
+	{
+			 return 0;
+	}
+	
 	DMA_ClearFlag(DMA1_FLAG_TC1);
 	return AD_Value[0];
 }

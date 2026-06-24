@@ -656,6 +656,26 @@
               <FilePath>.\User\main.c</FilePath>
             </File>
             <File>
+              <FileName>AppController.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\AppController.c</FilePath>
+            </File>
+            <File>
+              <FileName>AppController.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\User\AppController.h</FilePath>
+            </File>
+            <File>
+              <FileName>AppStateMachine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\AppStateMachine.c</FilePath>
+            </File>
+            <File>
+              <FileName>AppStateMachine.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\User\AppStateMachine.h</FilePath>
+            </File>
+            <File>
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\User\stm32f10x_conf.h</FilePath>
@@ -789,6 +809,16 @@
               <FileName>Ring_Buffer.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\Ring_Buffer.h</FilePath>
+            </File>
+            <File>
+              <FileName>Queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>Queue.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Queue.h</FilePath>
             </File>
           </Files>
         </Group>

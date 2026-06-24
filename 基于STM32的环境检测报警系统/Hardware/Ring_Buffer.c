@@ -1,17 +1,17 @@
 #include "Ring_Buffer.h"
 
-void RB_Init(RingBuffer *rb)
+void RB_Init( RingBuffer *rb)
 {
     rb->head = 0;
     rb->tail = 0;
 }
 
-bool RB_IsEmpty(RingBuffer *rb)
+bool RB_IsEmpty(const RingBuffer *rb)
 {
     return rb->head == rb->tail;
 }
 
-bool RB_IsFull(RingBuffer *rb)
+bool RB_IsFull(const RingBuffer *rb)
 {
     return ((rb->head + 1) % RB_SIZE) == rb->tail;
 }
